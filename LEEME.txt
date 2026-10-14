@@ -1,0 +1,23 @@
+CORRECCIÓN INTEGRADA — STREAMPULSE / MENTIDERO v2
+
+Este parche sustituye la presentación separada por una experiencia de dos niveles:
+- Debajo de Próximos lanzamientos aparece un cuadro compacto con hasta cuatro titulares recientes.
+- Al pulsar un titular se abre la vista ampliada del mentidero en el panel principal y destaca la noticia elegida con su resumen disponible, fecha, tipo, fuente y enlace original.
+- Desde la vista ampliada se puede volver a Próximos lanzamientos.
+- Se elimina el acceso independiente del menú lateral.
+- Se mantiene el endpoint /api/rumors y las cinco variables GOOGLE_ALERTS_RSS_1 ... GOOGLE_ALERTS_RSS_5.
+
+Archivos incluidos:
+- src/App.jsx
+- src/components/Sidebar.jsx
+- src/components/RumorMill.jsx
+- src/components/RumorTicker.jsx (nuevo)
+
+Aplicación:
+1. Haz copia de seguridad de esos archivos.
+2. Descomprime este ZIP en la raíz del proyecto actual y permite sobrescribir.
+3. No reemplaces server.mjs, api/rumors.js, package.json ni .env.
+4. Ejecuta npm run build y prueba la sección Próximos lanzamientos.
+5. Pulsa una noticia del cuadro: debe abrir el mentidero ampliado con esa noticia destacada. Usa “Volver a Próximos lanzamientos” para regresar.
+
+Nota: el detalle muestra el resumen que proporciona Google Alerts, si existe; no inventa contexto editorial. La clasificación automática es orientativa.
