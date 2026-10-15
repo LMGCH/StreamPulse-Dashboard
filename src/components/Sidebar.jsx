@@ -9,6 +9,7 @@ const menuItems = [
   { name: 'Top de Juegos', icon: '🎮' },
   { name: 'Streamers con más éxito', icon: '🎥' },
   { name: 'Próximos lanzamientos', icon: '🗓️' },
+  { name: 'Comunidad', icon: '👥' },
 ];
 
 export const Sidebar = ({
