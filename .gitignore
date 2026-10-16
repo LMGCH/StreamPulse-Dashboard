@@ -5,5 +5,4 @@ dist/
 !.env.example
 .DS_Store
 *.log
-APIKEY_RAWG.txt
 .vercel

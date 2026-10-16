@@ -1,10 +1,12 @@
 import { createServer } from 'node:http';
 import releasesHandler from './api/releases.js';
 import rumorsHandler from './api/rumors.js';
+import captureHandler from './api/capture.js';
 
 const handlers = {
   '/api/releases': releasesHandler,
   '/api/rumors': rumorsHandler,
+  '/api/capture': captureHandler,
 };
 
 const server = createServer(async (req, res) => {
