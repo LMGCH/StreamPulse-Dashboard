@@ -1,14 +1,12 @@
 import { createServer } from 'node:http';
 import releasesHandler from './api/releases.js';
 import rumorsHandler from './api/rumors.js';
-import captureHandler from './api/capture.js';
 import pollsHandler from './api/polls.js';
 
 
 const handlers = {
   '/api/releases': releasesHandler,
   '/api/rumors': rumorsHandler,
-  '/api/capture': captureHandler,
   '/api/polls': pollsHandler,
 };
 
