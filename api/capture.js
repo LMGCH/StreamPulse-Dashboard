@@ -36,7 +36,11 @@ export default async function handler(req, res) {
     : '';
 
   if (!captureSecret) {
-    return jsonError(res, 500, 'La captura no está configurada en el servidor.');
+    return jsonError(
+      res,
+      500,
+      'La captura no está configurada en el servidor.'
+    );
   }
 
   if (!secretsMatch(receivedSecret, captureSecret)) {
@@ -52,7 +56,11 @@ export default async function handler(req, res) {
 
   if (!clientId || !clientSecret || !supabaseUrl || !supabaseKey) {
     console.error('Captura: faltan variables de entorno necesarias.');
-    return jsonError(res, 500, 'La captura no está configurada por completo.');
+    return jsonError(
+      res,
+      500,
+      'La captura no está configurada por completo.'
+    );
   }
 
   try {
@@ -84,9 +92,9 @@ export default async function handler(req, res) {
       return jsonError(res, 502, 'Twitch no devolvió un token válido.');
     }
 
-    // 2. Consultar los directos globales observados en esta captura.
+    // 2. Capturar hasta 100 directos cuyo idioma declarado sea español.
     const streamsResponse = await fetch(
-      'https://api.twitch.tv/helix/streams?first=100',
+      'https://api.twitch.tv/helix/streams?first=100&language=es',
       {
         headers: {
           'Client-ID': clientId,
@@ -109,11 +117,11 @@ export default async function handler(req, res) {
         ok: true,
         observed: 0,
         observationHour: null,
-        message: 'Twitch no devolvió directos para esta captura.',
+        message: 'Twitch no devolvió directos en español para esta captura.',
       });
     }
 
-    // La misma hora UTC permite evitar duplicados si se repite la ejecución.
+    // La hora UTC permite evitar duplicados si se repite la ejecución.
     const observationHour = new Date();
     observationHour.setUTCMinutes(0, 0, 0);
     const hourIso = observationHour.toISOString();
@@ -129,13 +137,13 @@ export default async function handler(req, res) {
       observation_hour: hourIso,
     }));
 
-    // 3. Insertar en Supabase. Si el canal ya tiene observación
-    // en esta hora UTC, la restricción única evita duplicarla.
+    // 3. Guardar observaciones sin duplicar canal y hora UTC.
     const baseUrl = getSupabaseBaseUrl(supabaseUrl);
     const insertUrl = new URL(
       '/rest/v1/streamer_observations',
       `${baseUrl}/`
     );
+
     insertUrl.searchParams.set(
       'on_conflict',
       'twitch_user_id,observation_hour'
@@ -154,27 +162,37 @@ export default async function handler(req, res) {
     });
 
     if (!insertResponse.ok) {
-        const errorText = await insertResponse.text();
-        
-        console.error(
-            'Supabase insert respondió HTTP',
-            insertResponse.status,
-            errorText.slice(0, 1000)
-        );
-        
-        return jsonError(res, 502, 'No se pudieron guardar las observaciones.');
+      const errorText = await insertResponse.text();
+
+      console.error(
+        'Supabase insert respondió HTTP',
+        insertResponse.status,
+        errorText.slice(0, 1000)
+      );
+
+      return jsonError(
+        res,
+        502,
+        'No se pudieron guardar las observaciones.'
+      );
     }
 
     return res.status(200).json({
       ok: true,
       observed: observations.length,
       observationHour: hourIso,
+      language: 'es',
       message:
-        'Captura guardada. El número indica canales procesados, ' +
+        'Captura en español guardada. El número indica canales procesados, ' +
         'no necesariamente filas nuevas.',
     });
   } catch (error) {
     console.error('Error en la captura:', error.name || 'Error');
-    return jsonError(res, 502, 'Error de conexión durante la captura.');
+    return jsonError(
+      res,
+      502,
+      'Error de conexión durante la captura.'
+    );
   }
 }
+
