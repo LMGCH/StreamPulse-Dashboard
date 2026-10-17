@@ -104,7 +104,7 @@ function StreamerOfTheWeek() {
           <p className="mt-2 text-sm leading-6 text-zinc-400">
             Cuando haya suficientes observaciones históricas y se registre
             la primera selección semanal, aparecerá aquí. No inventamos
-            ganadores ni estadísticas.
+            nominados ni estadísticas.
           </p>
         </div>
       ) : (
