@@ -1,0 +1,32 @@
+
+name: StreamPulse - Captura horaria
+
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    name: Capturar observaciones de Twitch
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+
+    steps:
+      - name: Ejecutar captura en Vercel
+        env:
+          CAPTURE_SECRET: ${{ secrets.CAPTURE_SECRET }}
+        run: |
+          if [ -z "$CAPTURE_SECRET" ]; then
+            echo "Error: falta configurar el secreto CAPTURE_SECRET."
+            exit 1
+          fi
+
+          curl --silent --show-error --fail-with-body \
+            --max-time 60 \
+            --request POST \
+            --header "Authorization: Bearer $CAPTURE_SECRET" \
+            https://streampulsedashboard.vercel.app/api/capture
