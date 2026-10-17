@@ -9,6 +9,7 @@ import { FollowersRanking } from './components/FollowersRanking';
 import { useTwitch } from './hooks/useTwitch';
 import { UpcomingReleases } from './components/UpcomingReleases';
 import { RumorMill } from './components/RumorMill';
+import { Community } from './components/Community';
 
 const normalizeGameName = (name = '') => name
   .normalize('NFD')
@@ -262,7 +263,9 @@ function App() {
       <main className="flex min-h-screen min-w-0 flex-1 flex-col p-4 sm:p-6 md:ml-64 md:p-8">
         <header className="mb-8 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
           <div>
-            <h2 className="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">Estadísticas de Twitch</h2>
+          <h1 className="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">
+            Descubre qué juegos y streamers destacan en Twitch
+          </h1>
             <p className="mt-1 text-sm text-zinc-400">Explora directos y juegos por idioma, con datos observados de la API de Twitch.</p>
           </div>
           {!authRequired && (
@@ -333,67 +336,11 @@ function App() {
               onBack={() => setActiveSection('Próximos lanzamientos')}
             />
           </section>
+
         ) : activeSection === 'Comunidad' ? (
-          <section className="flex-1 space-y-6">
-            <div className="rounded-2xl border border-zinc-800 bg-darkCard p-6 sm:p-8">
-              <div className="text-4xl" aria-hidden="true">👥</div>
-              <h3 className="mt-4 text-2xl font-extrabold text-white">
-                Comunidad StreamPulse
-              </h3>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-400">
-                Un espacio para descubrir juegos, compartir intereses y seguir
-                la actualidad gamer. Empezamos por construir los cimientos,
-                sin inventar usuarios ni conversaciones.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <button
-                type="button"
-                onClick={() => setActiveSection('Top de Juegos')}
-                className="rounded-2xl border border-zinc-800 bg-darkCard p-5 text-left transition hover:border-twitch hover:bg-darkHover"
-              >
-                <span className="text-2xl" aria-hidden="true">🎮</span>
-                <h4 className="mt-3 font-bold text-white">Descubre juegos</h4>
-                <p className="mt-1 text-sm leading-5 text-zinc-400">
-                  Explora el ranking de juegos basado en la audiencia observada.
-                </p>
-                <span className="mt-4 block text-sm font-semibold text-purple-300">
-                  Explorar juegos →
-                </span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setActiveSection('El mentidero gamer')}
-                className="rounded-2xl border border-zinc-800 bg-darkCard p-5 text-left transition hover:border-twitch hover:bg-darkHover"
-              >
-                <span className="text-2xl" aria-hidden="true">📰</span>
-                <h4 className="mt-3 font-bold text-white">El Mentidero Gamer</h4>
-                <p className="mt-1 text-sm leading-5 text-zinc-400">
-                  Consulta el espacio de actualidad y rumores que ya existe.
-                </p>
-                <span className="mt-4 block text-sm font-semibold text-purple-300">
-                  Ir al Mentidero →
-                </span>
-              </button>
-            </div>
-
-            <div className="rounded-2xl border border-zinc-800 bg-darkCard p-6">
-              <div className="flex items-center gap-3">
-                <span className="text-2xl" aria-hidden="true">💬</span>
-                <h4 className="text-lg font-bold text-white">Conversaciones</h4>
-              </div>
-              <p className="mt-3 text-sm leading-6 text-zinc-400">
-                Este espacio está preparado para futuras conversaciones de la
-                comunidad. Todavía no hay publicaciones disponibles.
-              </p>
-              <span className="mt-4 inline-flex rounded-full border border-zinc-700 px-3 py-1 text-xs text-zinc-400">
-                Próximamente
-              </span>
-            </div>
-          </section>
+          <Community />
         ) : authRequired ? (
+
           <section className="flex flex-1 items-center justify-center">
             <div className="w-full max-w-xl rounded-2xl border border-zinc-800 bg-darkCard p-6 text-center shadow-2xl sm:p-10">
               <div className="mb-4 text-5xl" aria-hidden="true">⚡</div>

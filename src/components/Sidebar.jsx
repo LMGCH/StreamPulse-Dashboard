@@ -27,9 +27,9 @@ export const Sidebar = ({
           ⚡
         </span>
 
-        <h1 className="text-xl font-bold tracking-wider text-white">
-          Stream<span className="text-twitch">Pulse</span>
-        </h1>
+        <div className="text-xl font-bold tracking-wider text-white">
+        Stream<span className="text-twitch">Pulse</span>
+        </div>
       </div>
 
       {/* Navegación principal compacta */}

@@ -2,15 +2,19 @@ import { createServer } from 'node:http';
 import releasesHandler from './api/releases.js';
 import rumorsHandler from './api/rumors.js';
 import captureHandler from './api/capture.js';
+import pollsHandler from './api/polls.js';
+
 
 const handlers = {
   '/api/releases': releasesHandler,
   '/api/rumors': rumorsHandler,
   '/api/capture': captureHandler,
+  '/api/polls': pollsHandler,
 };
 
 const server = createServer(async (req, res) => {
-  const pathname = new URL(req.url ?? '/', 'http://localhost:3001').pathname;
+  const requestUrl = new URL(req.url ?? '/', 'http://localhost:3001');
+  const pathname = requestUrl.pathname;
   const handler = handlers[pathname];
 
   if (!handler) {
@@ -33,6 +37,7 @@ const server = createServer(async (req, res) => {
   };
 
   try {
+    req.query = Object.fromEntries(requestUrl.searchParams.entries());
     await handler(req, response);
   } catch (error) {
     console.error(`Error en ${pathname}:`, error.message);
