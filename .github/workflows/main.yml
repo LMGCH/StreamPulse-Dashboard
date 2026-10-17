@@ -3,7 +3,7 @@ name: StreamPulse - Captura horaria
 
 on:
   schedule:
-    - cron: '23 * * * *'
+    - cron: '37 * * * *'
   workflow_dispatch:
 
 permissions:
