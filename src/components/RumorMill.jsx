@@ -105,19 +105,38 @@ export function RumorMill({ selectedItemId = '', onBack }) {
       {selectedItem && (
         <article className="rounded-2xl border border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-darkCard p-5 sm:p-7">
           <div className="flex flex-wrap items-center gap-2">
-            <span className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${badgeClass(selectedItem.type)}`}>{selectedItem.type}</span>
+            <span className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${badgeClass(selectedItem.type)}`}>
+              {selectedItem.type}
+            </span>
             <span className="text-xs text-zinc-500">{formatDate(selectedItem.publishedAt)}</span>
-            <span className="text-xs text-zinc-500">· {selectedItem.source || 'Google Alerts'}</span>
           </div>
-          <h3 className="mt-3 break-words text-xl font-extrabold leading-snug text-white sm:text-2xl">{selectedItem.title}</h3>
+
+          <h3 className="mt-3 break-words text-xl font-extrabold leading-snug text-white sm:text-2xl">
+            {selectedItem.title}
+          </h3>
+
           {selectedItem.summary ? (
-            <p className="mt-3 whitespace-pre-line text-sm leading-7 text-zinc-300">{selectedItem.summary}</p>
+            <p className="mt-3 whitespace-pre-line text-sm leading-7 text-zinc-300">
+              {selectedItem.summary}
+            </p>
           ) : (
-            <p className="mt-3 text-sm leading-6 text-zinc-400">Google Alerts no ha proporcionado un resumen para esta entrada. Consulta la fuente original para leer el desarrollo completo.</p>
+            <p className="mt-3 text-sm leading-6 text-zinc-400">
+              Google Alerts no ha proporcionado un resumen para esta entrada. Consulta la fuente original para leer el desarrollo completo.
+            </p>
           )}
+
           <div className="mt-5 flex flex-wrap items-center gap-3 border-t border-zinc-800 pt-4">
-            <a href={selectedItem.url} target="_blank" rel="noopener noreferrer" className="rounded-lg bg-amber-500 px-4 py-2.5 text-sm font-bold text-zinc-950 transition hover:bg-amber-400">Leer noticia original ↗</a>
-            <p className="text-xs leading-5 text-zinc-500">La etiqueta es automática y orientativa; no verifica la veracidad de la información.</p>
+            <a
+              href={selectedItem.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-lg bg-amber-500 px-4 py-2.5 text-sm font-bold text-zinc-950 transition hover:bg-amber-400"
+            >
+              Leer noticia original ↗
+            </a>
+            <p className="text-xs leading-5 text-zinc-500">
+              La etiqueta es automática y orientativa; no verifica la veracidad de la información.
+            </p>
           </div>
         </article>
       )}
@@ -128,6 +147,7 @@ export function RumorMill({ selectedItemId = '', onBack }) {
             <p className="text-xs text-zinc-500">Noticias únicas</p>
             <p className="mt-1 text-2xl font-extrabold text-white">{data.total ?? data.items.length}</p>
           </div>
+
           <div className="rounded-xl border border-zinc-800 bg-darkCard p-4">
             <p className="text-xs text-zinc-500">Feeds activos</p>
             <p className="mt-1 text-2xl font-extrabold text-white">{data.successfulFeeds ?? 0}<span className="text-sm font-medium text-zinc-500"> / {data.configuredFeeds ?? 5}</span></p>
@@ -199,7 +219,6 @@ export function RumorMill({ selectedItemId = '', onBack }) {
                   <h3 className="mt-3 break-words text-lg font-bold leading-snug text-white">{item.title}</h3>
                   {item.summary && <p className="mt-2 line-clamp-4 whitespace-pre-line text-sm leading-6 text-zinc-400">{item.summary}</p>}
                   <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-zinc-800 pt-3">
-                    <span className="min-w-0 break-words text-xs text-zinc-500">{item.source || 'Google Alerts'}</span>
                     <a href={item.url} target="_blank" rel="noopener noreferrer" className="shrink-0 rounded-lg border border-zinc-700 px-3 py-2 text-sm font-semibold text-zinc-200 transition hover:border-twitch hover:text-white">
                       Leer fuente ↗
                     </a>

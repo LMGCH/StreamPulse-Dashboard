@@ -1,5 +1,40 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
+import StreamerRecommendationForm from './StreamerOfTheWeek';
+import streamerWeekPromo00 from '../assets/streamer-de-la-semana-00.webp';
+import streamerWeekPromo01 from '../assets/streamer-de-la-semana-01.webp';
+import streamerWeekPromo02 from '../assets/streamer-de-la-semana-02.webp';
+import streamerWeekPromo03 from '../assets/streamer-de-la-semana-03.webp';
+import streamerWeekPromo04 from '../assets/streamer-de-la-semana-04.webp';
+
+const STREAMER_WEEK_PROMOS = [
+  streamerWeekPromo00,
+  streamerWeekPromo01,
+  streamerWeekPromo02,
+  streamerWeekPromo03,
+  streamerWeekPromo04,
+];
+
+const STREAMER_WEEK_PROMO_KEY = 'streampulse-week-promo-index';
+
+function getNextStreamerWeekPromo() {
+  try {
+    const previous = Number(
+      localStorage.getItem(STREAMER_WEEK_PROMO_KEY)
+    );
+
+    const next =
+      Number.isInteger(previous) && previous >= 0 && previous < 5
+        ? (previous + 1) % 5
+        : 0;
+
+    localStorage.setItem(STREAMER_WEEK_PROMO_KEY, String(next));
+
+    return STREAMER_WEEK_PROMOS[next];
+  } catch {
+    return STREAMER_WEEK_PROMOS[0];
+  }
+}
 
 const BROWSER_ID_KEY = 'streampulse-community-browser-id';
 
@@ -36,6 +71,7 @@ function StreamerOfTheWeek() {
   const [streamers, setStreamers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [promoImage] = useState(getNextStreamerWeekPromo);
 
   useEffect(() => {
     let cancelled = false;
@@ -97,15 +133,23 @@ function StreamerOfTheWeek() {
       ) : error ? (
         <p className="mt-5 text-sm text-amber-300">{error}</p>
       ) : !featured ? (
-        <div className="mt-5 rounded-xl border border-zinc-800 bg-zinc-900/50 p-4">
-          <p className="font-semibold text-white">
-            Estamos reuniendo datos para la primera edición.
-          </p>
-          <p className="mt-2 text-sm leading-6 text-zinc-400">
-            Cuando haya suficientes observaciones históricas y se registre
-            la primera selección semanal, aparecerá aquí. No inventamos
-            nominados ni estadísticas.
-          </p>
+        <div className="mt-5 overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/50">
+          <img
+            src={promoImage}
+            alt="Próximamente en StreamPulse: Streamer de la semana"
+            className="block h-auto w-full object-contain"
+            loading="lazy"
+          />
+          <div className="p-4">
+            <p className="font-semibold text-white">
+              Estamos preparando la primera edición.
+            </p>
+            <p className="mt-2 text-sm leading-6 text-zinc-400">
+              Muy pronto podrás descubrir nuevos creadores, conocer sus
+              canales y acercarte a las personas que dan vida a la
+              comunidad de Twitch.
+            </p>
+          </div>
         </div>
       ) : (
         <>
@@ -188,6 +232,7 @@ function CommunityPoll() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+  const [hasVoted, setHasVoted] = useState(false);
 
   const loadPoll = useCallback(async () => {
     try {
@@ -247,15 +292,17 @@ function CommunityPoll() {
           browserId,
         }),
       });
-
+      
       const data = await response.json();
-
+      
       if (!response.ok) {
         throw new Error(data.error || 'No se pudo registrar tu participación.');
       }
-
+      
       setMessage(data.message || 'Participación registrada.');
+      setHasVoted(true);
       await loadPoll();
+      
     } catch (err) {
       setError(err.message || 'No se pudo registrar tu participación.');
     } finally {
@@ -301,84 +348,100 @@ function CommunityPoll() {
             {poll.question}
           </h4>
 
-          <form onSubmit={submitVote} className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
-            {options.map((option) => (
-              <label
-                key={option.id}
-                className={`flex cursor-pointer items-start gap-3 rounded-xl border p-3 transition ${
-                  selectedOption === option.id
-                    ? 'border-purple-500 bg-purple-500/10'
-                    : 'border-zinc-800 hover:border-zinc-600'
-                }`}
+          {hasVoted ? (
+            <div className="mt-4 space-y-4">
+              <p className="text-sm font-semibold text-emerald-300">
+                Gracias por participar. Estos son los resultados actuales.
+              </p>
+
+              <p className="text-xs text-zinc-400">
+                {totalVotes} participaciones registradas
+              </p>
+
+              {totalVotes > 0 ? (
+                options.map((option) => {
+                  const votes = Number(option.votes || 0);
+                  const percentage = Math.round((votes / totalVotes) * 100);
+
+                  return (
+                    <div key={option.id}>
+                      <div className="flex justify-between gap-3 text-xs">
+                        <span className="text-zinc-300">
+                          {option.option_text ?? option.text}
+                        </span>
+                        <span className="shrink-0 text-zinc-400">
+                          {percentage}% · {votes}
+                        </span>
+                      </div>
+
+                      <div className="mt-2 h-2 overflow-hidden rounded-full bg-zinc-800">
+                        <div
+                          className="h-full rounded-full bg-purple-500 transition-all"
+                          style={{ width: `${percentage}%` }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <p className="text-sm text-zinc-400">
+                  Todavía no hay resultados disponibles.
+                </p>
+              )}
+
+              <button
+                type="button"
+                onClick={loadPoll}
+                className="text-xs font-semibold text-purple-300 hover:text-purple-200"
               >
-                <input
-                  type="radio"
-                  name="community-poll"
-                  value={option.id}
-                  checked={selectedOption === option.id}
-                  onChange={() => setSelectedOption(option.id)}
-                  disabled={submitting}
-                  className="mt-1 accent-purple-500"
-                />
-                <span className="min-w-0 flex-1 text-sm leading-5 text-zinc-200">
-                  {option.option_text ?? option.text}
-                </span>
-              </label>
-            ))}
-
-            <button
-              type="submit"
-              disabled={submitting || !selectedOption || options.length === 0}
-              className="col-span-1 w-full rounded-xl bg-twitch px-4 py-3 text-sm font-bold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 sm:col-span-2"
-            >
-              {submitting ? 'Registrando…' : 'Participar'}
-            </button>
-          </form>
-
-          <div className="mt-4 flex items-center justify-between gap-3">
-            <p className="text-xs text-zinc-500">
-              {totalVotes} participaciones registradas
-            </p>
-            <button
-              type="button"
-              onClick={loadPoll}
-              className="text-xs font-semibold text-purple-300 hover:text-purple-200"
-            >
-              Actualizar resultados
-            </button>
-          </div>
-
-          {totalVotes > 0 && (
-            <div className="mt-4 space-y-3">
-              {options.map((option) => {
-                const votes = Number(option.votes || 0);
-                const percentage = Math.round((votes / totalVotes) * 100);
-
-                return (
-                  <div key={option.id}>
-                    <div className="flex justify-between gap-3 text-xs">
-                      <span className="text-zinc-300">
-                        {option.option_text ?? option.text}
-                      </span>
-                      <span className="shrink-0 text-zinc-400">
-                        {percentage}% · {votes}
-                      </span>
-                    </div>
-                    <div className="mt-2 h-2 overflow-hidden rounded-full bg-zinc-800">
-                      <div
-                        className="h-full rounded-full bg-purple-500 transition-all"
-                        style={{ width: `${percentage}%` }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
+                Actualizar resultados
+              </button>
             </div>
-          )}
-        </>
-      )}
+          ) : (
+            <>
+              <form
+                onSubmit={submitVote}
+                className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2"
+              >
+                {options.map((option) => (
+                  <label
+                    key={option.id}
+                    className={`flex cursor-pointer items-start gap-3 rounded-xl border p-3 transition ${
+                      selectedOption === option.id
+                        ? 'border-purple-500 bg-purple-500/10'
+                        : 'border-zinc-800 hover:border-zinc-600'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="community-poll"
+                      value={option.id}
+                      checked={selectedOption === option.id}
+                      onChange={() => setSelectedOption(option.id)}
+                      disabled={submitting}
+                      className="mt-1 accent-purple-500"
+                    />
 
-      {message && (
+                    <span className="min-w-0 flex-1 text-sm leading-5 text-zinc-200">
+                      {option.option_text ?? option.text}
+                    </span>
+                  </label>
+                ))}
+
+                <button
+                  type="submit"
+                  disabled={submitting || !selectedOption || options.length === 0}
+                  className="col-span-1 w-full rounded-xl bg-twitch px-4 py-3 text-sm font-bold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 sm:col-span-2"
+                >
+                  {submitting ? 'Registrando…' : 'Participar'}
+                </button>
+              </form>
+            </>
+          )}
+          </>
+        )}
+  
+        {message && (
         <p role="status" className="mt-4 text-sm text-emerald-300">
           {message}
         </p>
@@ -443,6 +506,7 @@ export function Community() {
           </span>
         </div>
       </section>
+      <StreamerRecommendationForm />
     </section>
   );
 }

@@ -10,6 +10,7 @@ import { useTwitch } from './hooks/useTwitch';
 import { UpcomingReleases } from './components/UpcomingReleases';
 import { RumorMill } from './components/RumorMill';
 import { Community } from './components/Community';
+import PrivacyPolicy from './components/PrivacyPolicy';
 
 const normalizeGameName = (name = '') => name
   .normalize('NFD')
@@ -261,6 +262,7 @@ function App() {
       />
 
       <main className="flex min-h-screen min-w-0 flex-1 flex-col p-4 sm:p-6 md:ml-64 md:p-8">
+        {activeSection !== 'Política de privacidad' && (
         <header className="mb-8 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
           <div>
           <h1 className="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">
@@ -322,8 +324,9 @@ function App() {
             </div>
           )}
         </header>
+        )}
 
-        {error && (
+        {error && activeSection !== 'Política de privacidad' && (
           <div role="alert" className="mb-6 rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-300">
             ⚠️ {error}
           </div>
@@ -339,6 +342,8 @@ function App() {
 
         ) : activeSection === 'Comunidad' ? (
           <Community />
+        ) : activeSection === 'Política de privacidad' ? (
+          <PrivacyPolicy />
         ) : authRequired ? (
 
           <section className="flex flex-1 items-center justify-center">
@@ -617,6 +622,17 @@ function App() {
 
           </section>
         )}
+        <footer className="mt-10 border-t border-zinc-800 pt-4 text-xs text-zinc-500">
+          <button
+            type="button"
+            onClick={() => setActiveSection('Política de privacidad')}
+            className="underline decoration-zinc-600 underline-offset-4 transition hover:text-zinc-200"
+          >
+            Política de privacidad
+          </button>
+          <span className="mx-2" aria-hidden="true">·</span>
+          <span>StreamPulse · Proyecto independiente</span>
+        </footer>
       </main>
     </div>
   );
