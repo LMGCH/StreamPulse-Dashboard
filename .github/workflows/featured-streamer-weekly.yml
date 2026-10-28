@@ -1,0 +1,47 @@
+
+name: StreamPulse - Actualizar streamer semanal
+
+on:
+  schedule:
+    - cron: "5 23 * * 0"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  advance-featured-streamer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comprobar configuración
+        env:
+          STREAMER_CRON_SECRET: ${{ secrets.STREAMER_CRON_SECRET }}
+        run: |
+          if [ -z "$STREAMER_CRON_SECRET" ]; then
+            echo "Falta configurar STREAMER_CRON_SECRET en GitHub."
+            exit 1
+          fi
+          echo "El secreto está configurado."
+
+            - name: Ejecutar transición semanal
+        env:
+          STREAMER_CRON_SECRET: ${{ secrets.STREAMER_CRON_SECRET }}
+        run: |
+          response=$(curl --silent --show-error \
+            --output response.json \
+            --write-out "%{http_code}" \
+            --request POST \
+            --header "Authorization: Bearer ${STREAMER_CRON_SECRET}" \
+            --header "Content-Type: application/json" \
+            --data '{}' \
+            "https://streampulsedashboard.vercel.app/api/featured-streamer-cron")
+
+          echo "HTTP: $response"
+
+          if [ "$response" != "200" ]; then
+            echo "Error al ejecutar la transición semanal."
+            cat response.json
+            exit 1
+          fi
+
+          cat response.json
