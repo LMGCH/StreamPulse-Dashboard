@@ -1,4 +1,3 @@
-
 name: StreamPulse - Actualizar streamer semanal
 
 on:
@@ -23,7 +22,7 @@ jobs:
           fi
           echo "El secreto está configurado."
 
-            - name: Ejecutar transición semanal
+      - name: Ejecutar transición semanal
         env:
           STREAMER_CRON_SECRET: ${{ secrets.STREAMER_CRON_SECRET }}
         run: |
